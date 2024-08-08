@@ -69,6 +69,8 @@ const getUserInfo = async (userId, userType) => {
 }
 
 const utilsMain = () => {
+    const userInfo = sessionStorage.getItem('user-info') ? JSON.parse(sessionStorage.getItem('user-info')) : null;
+    const courseInfo = sessionStorage.getItem('course-info') ? JSON.parse(sessionStorage.getItem('course-info')) : null;
 
     const participantsButton = document.getElementById('get-participants');
 
@@ -101,7 +103,7 @@ const utilsMain = () => {
                         `;
                     }
                     else {
-                        console.log("participant is => ",participant)
+                        console.log("participant is => ", participant)
                         div.innerHTML = `
                             <p class="participant-name">${participant.userName} - <span>Host</span></p>
                             <p class="participant-id">${participant.studenId ? participant.studenId : ""}</p>
@@ -116,6 +118,7 @@ const utilsMain = () => {
             }
         }
     })
+
 }
 
 document.addEventListener("DOMContentLoaded", utilsMain);

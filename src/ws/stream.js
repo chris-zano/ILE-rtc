@@ -29,6 +29,10 @@ const stream = ( socket ) => {
     socket.on( 'chat', ( data ) => {
         socket.to( data.room ).emit( 'chat', { sender: data.sender, msg: data.msg } );
     } );
+
+    socket.on('host-end-for-all', (room) => {
+        socket.to(room).emit('call-ended-for-all');
+    })
 };
 
 module.exports = stream;

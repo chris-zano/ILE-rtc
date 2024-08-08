@@ -23,7 +23,6 @@ app.get('/meeting', (req, res) => {
     const { courseId, chapter, userId, userType } = req.query;
 
     try {
-        console.log({ courseId, chapter, userId, userType })
         res.status(200).render('index', { courseId, chapter, userId, userType });
 
     } catch (error) {
