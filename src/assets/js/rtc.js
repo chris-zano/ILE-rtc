@@ -10,6 +10,30 @@ const constructCoursePageUrl = (userId, courseId, userType) => {
     return url;
 }
 
+const updateCourseMeetingInformation = async (courseId, chapter) => {
+    const url = `http://localhost:5050/rtc/update-call-info/${courseId}/${chapter}`;
+    const participants = await getParticipants(courseId);
+    const headers = { "Content-Type": "application/json" };
+
+    try {
+        const request = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({ attendees: participants })
+        });
+
+        const response = await request.json();
+
+        if (response.status === 200 && response.message === "Success") {
+            return true;
+        }
+
+        return false
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
 try {
     window.addEventListener('load', async () => {
         const onboardingURL = /http:\/\/localhost:8080\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
@@ -161,14 +185,16 @@ try {
 
             const leaveButton = document.getElementById('leave-call');
 
-            leaveButton.addEventListener('click', (event) => {
+            leaveButton.addEventListener('click', async (event) => {
                 event.preventDefault();
+
                 const coursePageUrl = constructCoursePageUrl(participantInformation.uid, room, participantInformation.permissionClass);
 
                 if (participantInformation.permissionClass === 'lecturer') {
-                    console.log('this is the host. end call for all');
                     alert('ending call for all particpants')
                     socket.emit('host-end-for-all', (room))
+                    await updateCourseMeetingInformation(room, chapterInfo);
+
                     location.href = coursePageUrl;
                 }
 
@@ -179,7 +205,7 @@ try {
 
                     }
                 }
-            })
+            });
 
 
             function getAndSetUserStream() {
