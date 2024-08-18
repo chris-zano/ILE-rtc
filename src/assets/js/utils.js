@@ -87,7 +87,7 @@ const utilsMain = () => {
             participantsDiv.style.display = 'block';
             participantsDiv.setAttribute("aria-hidden", 'false');
 
-            const courseInfo = sessionStorage.getItem('course-info') ? JSON.parse(localStorage.getItem('course-info')) : null;
+            const courseInfo = sessionStorage.getItem('course-info') ? JSON.parse(sessionStorage.getItem('course-info')) : null;
             if (courseInfo !== null) {
                 let courseId = courseInfo.doc._id;
                 const participants = await getParticipants(courseId);
