@@ -279,8 +279,6 @@ try {
                     };
                 }
 
-
-
                 //send ice candidate to partnerNames
                 pc[partnerName].onicecandidate = ({ candidate }) => {
                     socket.emit('ice candidates', { candidate: candidate, to: partnerName, sender: socketId });

@@ -91,7 +91,7 @@ const utilsMain = () => {
             if (courseInfo !== null) {
                 let courseId = courseInfo.doc._id;
                 const participants = await getParticipants(courseId);
-
+                console.log('Got participants', participants)
                 Array.from(participants).forEach((participant) => {
                     const div = document.createElement('div');
 
@@ -101,6 +101,7 @@ const utilsMain = () => {
                             <p class="participant-name">${participant.userName} - <span>Host</span></p>
                             <p class="participant-id">${participant.studenId ? participant.studenId : ""}</p>
                         `;
+                        console.log('participant added =>  (Host)', div);
                     }
                     else {
                         console.log("participant is => ", participant)
