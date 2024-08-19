@@ -106,7 +106,7 @@ const utilsMain = () => {
                     else {
                         console.log("participant is => ", participant)
                         div.innerHTML = `
-                            <p class="participant-name">${participant.userName} - <span>Host</span></p>
+                            <p class="participant-name">${participant.userName}</p>
                             <p class="participant-id">${participant.studenId ? participant.studenId : ""}</p>
                         `;
                     }

@@ -119,25 +119,31 @@
                 <div class="row mt-2 mb-2" id="videos"></div>
             </div>
 
-            <div class="col-md-3 chat-col d-print-none mb-2" id="chat-pane" hidden>
-                <div class="row chat-header">
-                    <div class="col-12 text-center h2 mb-3">Chat</div>
+            <div class="chat-container d-print-none" id="chat-pane" hidden>
+                <div class="chat-header">
+                    <h2>Chat</h2>
+                    <button type="button" class="btn-close" id="close-chat">
+                        <i class="fas fa-times" ></i>
+                    </button>
                 </div>
-
+            
                 <div id="chat-messages" class="chat-messages"></div>
-
+            
                 <form class="chat-form">
-                    <div class="input-group">
-                        <textarea id="chat-input" class="form-control chat-box" rows="1"
-                            placeholder="Type a message here..."></textarea>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-send" id="chat-input-btn">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
+                    <div class="chat-input-container">
+                        <textarea id="chat-input" class="chat-box" rows="1" placeholder="Type a message here..."></textarea>
+                        <button type="button" class="hidden" id="chat-input-btn">
+                        </button>
                     </div>
                 </form>
             </div>
+            <script>
+                document.getElementById('close-chat').addEventListener('click', (e) => {
+                    document.getElementById('chat-pane').setAttribute('hidden', 'true');
+                    console.log(document.getElementById('chat-pane'))
+                })
+            </script>
+            
         </div>
     </div>
 </body>

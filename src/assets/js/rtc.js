@@ -312,12 +312,28 @@ try {
                         cardDiv.className = 'card card-sm';
                         cardDiv.id = partnerName;
                         cardDiv.appendChild(newVid);
-                        cardDiv.appendChild(controlDiv);
 
                         //put div in main-section elem
                         document.getElementById('videos').appendChild(cardDiv);
 
                         h.adjustVideoElemSize();
+
+                        cardDiv.addEventListener('click', (e) => {
+                            console.log(e.target);
+                            if (!(e.target.getAttribute('data-full-screen')) || e.target.getAttribute('data-full-screen') === 'false') {
+                                e.target.setAttribute('data-full-screen', 'true');
+                                newVid.style.objectFit = 'cover';
+                        
+                                if (window.innerWidth < 767) {
+                                    e.target.classList.add('rotatable-div');
+                                }
+                            } else {
+                                console.log(e.target, 'is true');
+                                e.target.setAttribute('data-full-screen', 'false');
+                                e.target.classList.remove('rotatable-div');
+                            }
+                        });
+                        
                     }
                 };
 
