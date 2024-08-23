@@ -5,13 +5,13 @@ const constructCoursePageUrl = (userId, courseId, userType) => {
     const validUserTypes = ["lecturer", "student"];
     if (validUserTypes.indexOf(userType) === -1) return null
 
-    const url = `http://localhost:5050/${userType}s/render/course/${courseId}/${userId}`;
+    const url = `https://ile-ile.onrender.com/${userType}s/render/course/${courseId}/${userId}`;
 
     return url;
 }
 
 const updateCourseMeetingInformation = async (courseId, chapter) => {
-    const url = `http://localhost:5050/rtc/update-call-info/${courseId}/${chapter}`;
+    const url = `https://ile-ile.onrender.com/rtc/update-call-info/${courseId}/${chapter}`;
     const participants = await getParticipants(courseId);
     const headers = { "Content-Type": "application/json" };
 
@@ -36,9 +36,9 @@ const updateCourseMeetingInformation = async (courseId, chapter) => {
 }
 try {
     window.addEventListener('load', async () => {
-        const onboardingURL = /http:\/\/localhost:8080\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
+        const onboardingURL = /https:\/\/ile-rtc.onrender.com\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
 
-        const meetingRoomUrl = /http:\/\/localhost:8080\/meeting\?room=[a-f0-9]{8}/;
+        const meetingRoomUrl = /https:\/\/ile-rtc.onrender.com\/meeting\?room=[a-f0-9]{8}/;
 
         if (onboardingURL.test(window.location.href)) {
             let courseRoom = h.getQString(location.href, 'courseId');
@@ -64,7 +64,7 @@ try {
 
             if (!courseInfo || !userInfo) {
                 alert("Cannot validate your credentials. redirecting to login");
-                return window.location.href = 'http://localhost:5050/login';
+                return window.location.href = 'https://ile-ile.onrender.com/login';
             }
 
             const room = courseInfo.doc._id;
@@ -610,7 +610,7 @@ try {
         }
         else {
             alert('Invalid Meeting URL');
-            window.location.href = "http://localhost:5050/login"
+            window.location.href = "https://ile-ile.onrender.com/login"
         }
     });
 } catch (error) {

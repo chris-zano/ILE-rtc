@@ -1,7 +1,7 @@
 
 const addParticipant = async (courseId, participant) => {
     console.log({ courseId, participant })
-    const request = await fetch(`http://localhost:5050/rtc/add-participant/${courseId}`, {
+    const request = await fetch(`https://ile-ile.onrender.com/rtc/add-participant/${courseId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -22,7 +22,7 @@ const addParticipant = async (courseId, participant) => {
 }
 
 const getParticipants = async (courseId) => {
-    const request = await fetch(`http://localhost:5050/rtc/get-participants/${courseId}`);
+    const request = await fetch(`https://ile-ile.onrender.com/rtc/get-participants/${courseId}`);
     const status = request.status;
     const response = await request.json();
 
@@ -39,7 +39,7 @@ const getParticipants = async (courseId) => {
 const getCourseInformation = async (courseId) => {
 
     const path = `/rtc/course/info?id=${courseId}`;
-    const url = encodeURI(`http://localhost:5050${path}`);
+    const url = encodeURI(`https://ile-ile.onrender.com${path}`);
 
     const response = await fetch(url);
     const data = await response.json();
@@ -55,7 +55,7 @@ const getCourseInformation = async (courseId) => {
 const getUserInfo = async (userId, userType) => {
 
     const path = `/rtc/user/info?id=${userId}&type=${userType}`;
-    const url = encodeURI(`http://localhost:5050${path}`);
+    const url = encodeURI(`https://ile-ile.onrender.com${path}`);
 
     const response = await fetch(url);
     const data = await response.json();
