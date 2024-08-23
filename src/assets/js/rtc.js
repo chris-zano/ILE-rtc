@@ -36,9 +36,9 @@ const updateCourseMeetingInformation = async (courseId, chapter) => {
 }
 try {
     window.addEventListener('load', async () => {
-        const onboardingURL = /https:\/\/ile-rtc.onrender.com\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
+        const onboardingURL = /http:\/\/localhost:8080\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
 
-        const meetingRoomUrl = /https:\/\/ile-rtc.onrender.com\/meeting\?room=[a-f0-9]{8}/;
+        const meetingRoomUrl = /http:\/\/localhost:8080\/meeting\?room=[a-f0-9]{8}/;
 
         if (onboardingURL.test(window.location.href)) {
             let courseRoom = h.getQString(location.href, 'courseId');
