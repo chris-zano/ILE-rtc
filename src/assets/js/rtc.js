@@ -4,6 +4,9 @@ import h from './helpers.js';
 // const environment_url = 'http://localhost:5050';
 const environment_url = 'https://ile-ile.onrender.com';
 
+// const deployed_url = `http://localhost:8080`;
+const deployed_url = `https://ile-rtc.onrender.com`;
+
 let roomCount = 0
 
 const constructCoursePageUrl = (userId, courseId, userType) => {
@@ -41,9 +44,9 @@ const updateCourseMeetingInformation = async (courseId, chapter) => {
 }
 try {
     window.addEventListener('load', async () => {
-        const onboardingURL = /http:\/\/localhost:8080\/meeting\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)/
+        const onboardingURL = new RegExp(`^${deployed_url}/meeting\\?courseId=[a-f0-9]{8}[a-f0-9]{16}&chapter=[0-9]+&userId=[a-f0-9]{8}[a-f0-9]{16}&userType=(lecturer|student)`);
 
-        const meetingRoomUrl = /http:\/\/localhost:8080\/meeting\?room=[a-f0-9]{8}/;
+        const meetingRoomUrl = new RegExp(`^${deployed_url}/meeting\\?room=[a-f0-9]{8}`);
 
         if (onboardingURL.test(window.location.href)) {
             let courseRoom = h.getQString(location.href, 'courseId');
@@ -522,7 +525,7 @@ try {
         }
         else {
             alert('Invalid Meeting URL');
-            window.location.href = "http://localhost:5050/login"
+            window.location.href = "https://ile-ile.onrender.com/login"
         }
     });
 } catch (error) {
