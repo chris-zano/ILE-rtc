@@ -1,0 +1,149 @@
+@font-face {
+    font-family: robotoReg;
+    src: url('http://localhost:5050/fonts/roboReg');
+    /* src: url('https://ile-ile.onrender.com/fonts/roboReg'); */
+}
+
+@font-face {
+    font-family: RobotoSlab;
+    src: url('http://localhost:5050/fonts/RobotoSlab-Regular');
+    /* src: url('https://ile-ile.onrender.com/fonts/RobotoSlab-Regular'); */
+}
+
+:root {
+    /* colors */
+    --text-title: #000000;
+    --text-body: #1f232a;
+    --text: #7e8a9e;
+    --white: #ffffff;
+    --background: #ffffff;
+    --background-main: #e8e8e8;
+    --primary: #3074d9;
+    --primary-dark: #043783;
+    --secondary: #54b1b3;
+    --accent: #57b0e0;
+    --accent-dark: #065a87;
+    --red: #ac0000;
+    --dark-red: #410000f0;
+    --blue: #4648cf;
+    --purple: #905fae;
+    --yellow: #ffff00;
+    --inactive: hsl(0, 2%, 77%);
+    --black:#292828b6;
+    --o-transparent: rgba(255, 252, 252, 0.013);
+
+
+    /* fonts */
+    --default-font-face: 'RobotoSlab';
+    --secondary-font-face: 'robotoReg'
+    --font-small: 11px;
+    --font-standard: 14px;
+    --font-medium: 18px;
+    --font-large: 24px;
+    --font-extra: 48px;
+
+    /* margins and padding */
+    --margin-small: 10px;
+    --margin-medium: 17px;
+    --margin-large: 4.5rem;
+    --margin-all-pix: 10px 20px;
+    --margin-all-em: 0.6rem 1rem;
+    --padding-all-pix: 10px 20px;
+    --padding-all-em: 0.6rem 1rem;
+
+    /* borders and border-radius */
+    --border-default: 1px solid var(--text);
+    --border-radius: 1.8ch;
+    --border-radius-thin: 0.5rem;
+    --boder-radius-circle: 50%;
+
+    /* box shadows */
+    --box-shadow-thin: 0px 3px 3px var(--black);
+    --box-shadow-extra-thin: 0px 2px 2px #adadad;
+
+    /* input-fields */
+    --button-height: 45px;
+    --button-width: 100px;
+
+    /* transitions */
+    --transition-default: all ease-in-out 250ms;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    outline: none !important;
+    font-family: var(--default-font-face);
+    color: var(--text);
+}
+
+*::-webkit-scrollbar {
+    display: none;
+    width: 3px;
+    height: 3px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: var(--accent);
+    border-radius: 50px;
+    height: 90%;
+    width: 90%;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 50px;
+    background-color: green;
+}
+
+
+.toast {
+    position: fixed;
+    top: calc(100vh - 50% / 2);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 250px;
+    padding: 15px;
+    margin-top: 10px;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10000;
+}
+.toast span {
+    color: var(--white);
+}
+.toast.error {
+    background-color: #e74c3c;
+}
+
+.toast.warning {
+    background-color: #f39c12;
+}
+
+.toast.info {
+    background-color: #3498db;
+}
+
+.toast.success {
+    background-color: #2ecc71;
+}
+
+.toast .close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-left: 10px;
+}

@@ -10,10 +10,17 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
-    <link rel="stylesheet" href="../assets/css/app.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/rtc.root.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/rtc.popus.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/mobile.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/controls.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/presenter.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/video-grid.css" type="text/css" />
 
     <script defer src="../assets/js/notifications.js"></script>
     <script defer src="../assets/js/utils.js"></script>
+    <script defer src="../assets/js/actions.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script defer type="module" src="../assets/js/rtc.js"></script>
     <script defer type="module" src="../assets/js/events.js"></script>
@@ -29,123 +36,82 @@
 </head>
 
 <body>
-    <input type="hidden" name="courseId" id="courseId" value="<%= courseId %>">
-    <input type="hidden" name="chapter" id="chapter" value="<%= chapter %>">
-    <input type="hidden" name="userId" id="userId" value="<%= userId %>">
 
-    <script>
-        const courseId = document.getElementById('courseId').value;
-        const chapter = document.getElementById('chapter').value;
-        const userId = document.getElementById('userId').value;
+    <section id="rtc-room-main">
+        <div id="main-div">
+            <div class="presenting-main" id="presenting-main">
+                <p id="no-presenter">No one is presenting</p>
 
-    </script>
-    <div class="custom-modal hidden" id="recording-options-modal">
-        <div class="custom-modal-content dropdown-content">
-            <div class="row text-center">
-                <div class="">
-                    <span class="record-option" id="record-video">Record video</span>
-                </div>
-                <div class="">
-                    <span class="record-option" id="record-screen">Record screen</span>
-                </div>
             </div>
-
-            <div class="row mt-3">
-                <div class="col-12 text-center">
-                    <button class="btn btn-outline-danger" id="closeModal">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <nav class="console-nav">
-        <div class="console-actions">
-            <div class="actions-main">
-                <button class="console-buttons" id="toggle-video" title="Hide Video">
-                    <i class="fa fa-video text-white"></i>
-                    <span>My Video</span>
-                </button>
-
-                <button class="console-buttons" id="toggle-mute" title="Mute">
-                    <i class="fa fa-microphone-alt text-white"></i>
-                    <span>My Audio</span>
-                </button>
-
-                <button class="console-buttons" id="share-screen" title="Share screen">
-                    <i class="fa fa-desktop text-white"></i>
-                    <span id="btn-share-screen">Share Screen</span>
-                </button>
-            </div>
-
-            <div class="actions-secondary">
-                <button class="sec-btn" id="record" title="Record">
-                    <i class="fa fa-dot-circle text-red"></i>
-                </button>
-
-                <button class="text-white sec-btn" id="toggle-chat-pane">
-                    <i class="fas fa-comment-alt"></i>
-                    <span class="badge badge-danger very-small font-weight-lighter" id="new-chat-notification"
-                        hidden>New</span>
-                </button>
-
-                <button class="text-white sec-btn" id="toggle-participants-pane">
-                    <i class="fas fa-user-friends" id="get-participants"></i>
-                </button>
-
-                <button class="sec-btn">
-                    <a href="#" class="text-white text-decoration-none" id="leave-call"><i class="fa fa-sign-out-alt text-red"
-                            title="Leave"></i></a>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-fluid room-comm" hidden>
-        <div class="row">
-            <video class="local-video mirror-mode" id="local" volume="0" autoplay muted></video>
-        </div>
-
-        <div class="participants-div" id="participants-div" aria-hidden="true">
-            <div class="header">
-                <h3>Participants <small id="attendance-count"></small></h3>
-            </div>
-            <div class="collection-participants" id="participants-collection"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12 main" id="main-section">
-                <div class="row mt-2 mb-2" id="videos"></div>
-            </div>
-
-            <div class="chat-container d-print-none" id="chat-pane" hidden>
-                <div class="chat-header">
-                    <h2>Chat</h2>
-                    <button type="button" class="btn-close" id="close-chat">
-                        <i class="fas fa-times" ></i>
-                    </button>
-                </div>
-            
-                <div id="chat-messages" class="chat-messages"></div>
-            
-                <form class="chat-form">
-                    <div class="chat-input-container">
-                        <textarea id="chat-input" class="chat-box" rows="1" placeholder="Type a message here..."></textarea>
-                        <button type="button" class="hidden" id="chat-input-btn">
-                        </button>
+            <div id="video-grid">
+                <div class="user-video">
+                    <video class="mirror-mode" id="local" volume="0" autoplay muted></video>
+                    <div class="video-overlay-controls" onclick="expandCard(this)">
+                        <div class="user-name" id="my-name">Dr. Phillip Kissembe (me)</div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div id="controls-tab">
+            <div id="time"></div>
+            <div class="icons call-controls">
+                <div class="btn"><i class="fa fa-microphone" id="toggle-mute"></i></div>
+                <div class="btn"><i class="fa fa-video-camera" id="toggle-video"></i></div>
+                <div class="btn"><i class="fa fa-upload" id="share-screen"></i></div>
+                <div class="btn end-btn" id="leave-call"><i class="fa fa-phone" aria-hidden="true"></i></div>
+            </div>
+            <div class="icons call-actions">
+                <div class="btn" id="chat-box-btn"><i class="fas fa-comment-alt"></i></div>
+                <div class="btn"><i class="fas fa-info-circle"></i></div>
+                <div class="btn"><i class="fas fa-user-friends" id="get-participants"></i></div>
+            </div>
+        </div>
+    </section>
+   
+   
+    <section class="popups" id="popups" aria-hidden="true">
+        <article class="attendance" id="article-attendance" aria-hidden="true">
+            <div class="attendance-title">
+                <p>Participants (<span id="participants-count">10</span>)</p>
+            </div>
+            <ul id="participants-list"></ul>
+        </article>
+
+        <article class="chats" id="chats" aria-hidden="true">
+            <div class="chats-title">
+                <p>Messages</p>
+                <small>&#9432; Messages are not available after the call</small>
+            </div>
+            <ul class="chat-list" id="chat-list">
+                <li>
+                    <span class="sender">Dr. Phillip Kissembe <span class="date-time" style="margin-left: 10px;">
+                            &nbsp;20:37pm</span></span>
+                    <p class="message">This is the contents of the message. I hope it finds whomever reads it well.
+                        blessings</p>
+
+                </li>
+
+            </ul>
+            <div class="msg-form">
+                <div id="msg-preview" aria-hidden="true">
+                </div>
+                <form action="#" method="post" id="form">
+                    <input type="text" id="msg-input" placeholder="enter message here...." required>
                 </form>
             </div>
             <script>
-                document.getElementById('close-chat').addEventListener('click', (e) => {
-                    document.getElementById('chat-pane').setAttribute('hidden', 'true');
-                    console.log(document.getElementById('chat-pane'))
+                const previewDiv = document.getElementById("msg-preview");
+                const msgInput = document.getElementById("msg-input");
+
+                msgInput.addEventListener('input', () => {
+                    previewDiv.setAttribute("aria-hidden", "false")
+                    previewDiv.textContent = msgInput.value
                 })
             </script>
-            
-        </div>
-    </div>
+        </article>
+    </section>
 </body>
 
 </html>

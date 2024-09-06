@@ -10,7 +10,6 @@ export default {
     closeVideo(elemId) {
         if (document.getElementById(elemId)) {
             document.getElementById(elemId).remove();
-            this.adjustVideoElemSize();
         }
     },
 
@@ -131,43 +130,6 @@ export default {
         };
     },
 
-
-    addChat(data, senderType) {
-        let chatMsgDiv = document.querySelector('#chat-messages');
-        let senderClass = 'local';
-        let senderName = 'You';
-
-        if (senderType === 'remote') {
-            senderClass = 'remote';
-            senderName = data.sender;
-            this.toggleChatNotificationBadge();
-        }
-
-        let infoDiv = document.createElement('div');
-        infoDiv.className = 'sender-info';
-        infoDiv.innerText = `${senderName} - ${moment().format('Do MMMM, YYYY h:mm a')}`;
-
-        let msgDiv = document.createElement('div');
-        msgDiv.className = `msg msgdiv`;
-        msgDiv.innerHTML = xssFilters.inHTMLData(data.msg).autoLink({ target: "_blank", rel: "nofollow" });
-
-        chatMsgDiv.appendChild(infoDiv);
-        chatMsgDiv.appendChild(msgDiv);
-    },
-
-
-    toggleChatNotificationBadge() {
-        if (document.querySelector('#chat-pane').classList.contains('chat-opened')) {
-            document.querySelector('#new-chat-notification').setAttribute('hidden', true);
-        }
-
-        else {
-            document.querySelector('#new-chat-notification').removeAttribute('hidden');
-        }
-    },
-
-
-
     replaceTrack(stream, recipientPeer) {
         let sender = recipientPeer.getSenders ? recipientPeer.getSenders().find(s => s.track && s.track.kind === stream.kind) : false;
 
@@ -178,18 +140,6 @@ export default {
 
     toggleShareIcons(share) {
         let shareIconElem = document.querySelector('#share-screen');
-
-        if (share) {
-            shareIconElem.setAttribute('title', 'Stop sharing screen');
-            shareIconElem.children[0].classList.add('text-primary');
-            shareIconElem.children[0].classList.remove('text-white');
-        }
-
-        else {
-            shareIconElem.setAttribute('title', 'Share screen');
-            shareIconElem.children[0].classList.add('text-white');
-            shareIconElem.children[0].classList.remove('text-primary');
-        }
     },
 
 
@@ -261,65 +211,4 @@ export default {
         localVidElem.srcObject = stream;
         mirrorMode ? localVidElem.classList.add('mirror-mode') : localVidElem.classList.remove('mirror-mode');
     },
-
-
-    adjustVideoElemSize() {
-        let elem = document.getElementsByClassName('card');
-        let totalRemoteVideosDesktop = elem.length;
-        let newWidth = totalRemoteVideosDesktop <= 2 ? '50%' : (
-            totalRemoteVideosDesktop == 3 ? '33.33%' : (
-                totalRemoteVideosDesktop <= 8 ? '25%' : (
-                    totalRemoteVideosDesktop <= 15 ? '20%' : (
-                        totalRemoteVideosDesktop <= 18 ? '16%' : (
-                            totalRemoteVideosDesktop <= 23 ? '15%' : (
-                                totalRemoteVideosDesktop <= 32 ? '12%' : '10%'
-                            )
-                        )
-                    )
-                )
-            )
-        );
-
-
-        for (let i = 0; i < totalRemoteVideosDesktop; i++) {
-            elem[i].style.width = newWidth;
-        }
-    },
-
-
-    createDemoRemotes(str, total = 6) {
-        let i = 0;
-
-        let testInterval = setInterval(() => {
-            let newVid = document.createElement('video');
-            newVid.id = `demo-${i}-video`;
-            newVid.srcObject = str;
-            newVid.autoplay = true;
-            newVid.className = 'remote-video';
-
-            //video controls elements
-            let controlDiv = document.createElement('div');
-            controlDiv.className = 'remote-video-controls';
-            controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i>
-                <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
-
-            //create a new div for card
-            let cardDiv = document.createElement('div');
-            cardDiv.className = 'card card-sm';
-            cardDiv.id = `demo-${i}`;
-            cardDiv.appendChild(newVid);
-            cardDiv.appendChild(controlDiv);
-
-            //put div in main-section elem
-            document.getElementById('videos').appendChild(cardDiv);
-
-            this.adjustVideoElemSize();
-
-            i++;
-
-            if (i == total) {
-                clearInterval(testInterval);
-            }
-        }, 2000);
-    }
 };

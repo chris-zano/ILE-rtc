@@ -1,17 +1,22 @@
 
 import h from './helpers.js';
 
+// const environment_url = 'http://localhost:5050';
+const environment_url = 'https://ile-ile.onrender.com';
+
+let roomCount = 0
+
 const constructCoursePageUrl = (userId, courseId, userType) => {
     const validUserTypes = ["lecturer", "student"];
     if (validUserTypes.indexOf(userType) === -1) return null
 
-    const url = `http://localhost:5050/${userType}s/render/course/${courseId}/${userId}`;
+    const url = `${environment_url}/${userType}s/render/course/${courseId}/${userId}`;
 
     return url;
 }
 
 const updateCourseMeetingInformation = async (courseId, chapter) => {
-    const url = `http://localhost:5050/rtc/update-call-info/${courseId}/${chapter}`;
+    const url = `${environment_url}/rtc/update-call-info/${courseId}/${chapter}`;
     const participants = await getParticipants(courseId);
     const headers = { "Content-Type": "application/json" };
 
@@ -64,7 +69,8 @@ try {
 
             if (!courseInfo || !userInfo) {
                 alert("Cannot validate your credentials. redirecting to login");
-                return window.location.href = 'http://localhost:5050/login';
+                // return window.location.href = 'https://ile-ile.onrender.com/login';
+                return window.location.href = `${environment_url}/login`;
             }
 
             const room = courseInfo.doc._id;
@@ -75,10 +81,11 @@ try {
                 userName: userName,
                 uid: userInfo.doc._id,
                 permissionClass: _userType,
-                studentId: _userType === 'student' ? userInfo.doc.studentId : null
+                studentId: _userType === 'student' ? userInfo.doc.studentId : null,
+                profilePicUrl: userInfo.doc.profilePicUrl
             }
 
-            await addParticipant(room, participantInformation);
+            roomCount = Array.from(await addParticipant(room, participantInformation)).length;
 
             let commElem = document.getElementsByClassName('room-comm');
 
@@ -88,10 +95,9 @@ try {
 
             var pc = [];
 
-            let socket = io('/stream');
+            let socket = io();
 
             var socketId = '';
-            var randomNumber = `__${h.generateRandomString()}__${h.generateRandomString()}__`;
             var myStream = '';
             var screen = '';
             var recordedStream = [];
@@ -168,18 +174,51 @@ try {
                     }
                 });
 
-
-                socket.on('chat', (data) => {
-                    h.addChat(data, 'remote');
-                });
-
                 socket.on('call-ended-for-all', () => {
                     alert('call ended by host')
                     const coursePageUrl = constructCoursePageUrl(participantInformation.uid, room, participantInformation.permissionClass);
                     location.href = coursePageUrl;
+                });
 
-                })
+                socket.on('receive-message', (inputMsg, userName) => {
+                    console.log('message received from server', { userName, inputMsg })
+                    inputMsg = urlify(inputMsg);
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="sender">${userName}</span>
+                        <p class="message">${inputMsg}</p>
+                        <span class="date-time">&nbsp;${formatAMPM(new Date)}</span>
+                    `;
+                    document.getElementById('chat-list').append(li);
+                });
+
+                document.getElementById('form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    let inputMsg = document.getElementById('msg-input').value;
+                    console.log(inputMsg, 1)
+                    if (inputMsg != '') {
+                        console.log(inputMsg, 2)
+                        socket.emit('send-message', { room: room, socketId: socketId, inputMsg, userName });
+                    }
+                    document.getElementById('msg-preview').setAttribute('aria-hidden', 'true')
+                });
+
+
             });
+
+
+
+
+
+            function urlify(text) {
+                var urlRegex = /(https?:\/\/[^\s]+)/g;
+                return text.replace(urlRegex, function (url) {
+                    return '<a href="' + url + '">' + url + '</a>';
+                })
+            }
+
+
+
 
 
 
@@ -217,21 +256,6 @@ try {
                 }).catch((e) => {
                     console.error(`stream error: ${e}`);
                 });
-            }
-
-
-            function sendMsg(msg) {
-                let data = {
-                    room: room,
-                    msg: msg,
-                    sender: `${userName})`
-                };
-
-                //emit chat message
-                socket.emit('chat', data);
-
-                //add localchat
-                h.addChat(data, 'local');
             }
 
 
@@ -287,53 +311,56 @@ try {
 
 
                 //add
-                pc[partnerName].ontrack = (e) => {
+                pc[partnerName].ontrack = async (e) => {
                     let str = e.streams[0];
                     if (document.getElementById(`${partnerName}-video`)) {
                         document.getElementById(`${partnerName}-video`).srcObject = str;
                     }
 
                     else {
-                        //video elem
+                        const videoGrid = document.getElementById('video-grid');
+
+                        // Create a new video element
                         let newVid = document.createElement('video');
                         newVid.id = `${partnerName}-video`;
                         newVid.srcObject = str;
                         newVid.autoplay = true;
-                        newVid.className = 'remote-video';
+                        newVid.muted = true; // Optional: mute the video for local playback
 
-                        //video controls elements
-                        let controlDiv = document.createElement('div');
-                        controlDiv.className = 'remote-video-controls';
-                        controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i>
-                        <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
-
-                        //create a new div for card
+                        // Create a new div for the card
                         let cardDiv = document.createElement('div');
-                        cardDiv.className = 'card card-sm';
+                        cardDiv.className = 'user-video';
                         cardDiv.id = partnerName;
                         cardDiv.appendChild(newVid);
 
-                        //put div in main-section elem
-                        document.getElementById('videos').appendChild(cardDiv);
+                        // Create the overlay controls div
+                        let overlayDiv = document.createElement('div');
+                        overlayDiv.className = 'video-overlay-controls';
+                        overlayDiv.onclick = () => expandCard(overlayDiv);
 
-                        h.adjustVideoElemSize();
+                        // Add the user's name to the overlay
+                        let userNameDiv = document.createElement('div');
+                        userNameDiv.className = 'user-name';
+                        userNameDiv.id = 'my-name';
+                        userNameDiv.innerText = `Dr. Phillip Kissembe (me)`; // Example user name
 
-                        cardDiv.addEventListener('click', (e) => {
-                            console.log(e.target);
-                            if (!(e.target.getAttribute('data-full-screen')) || e.target.getAttribute('data-full-screen') === 'false') {
-                                e.target.setAttribute('data-full-screen', 'true');
-                                newVid.style.objectFit = 'cover';
-                        
-                                if (window.innerWidth < 767) {
-                                    e.target.classList.add('rotatable-div');
-                                }
-                            } else {
-                                console.log(e.target, 'is true');
-                                e.target.setAttribute('data-full-screen', 'false');
-                                e.target.classList.remove('rotatable-div');
-                            }
-                        });
-                        
+                        overlayDiv.appendChild(userNameDiv);
+
+                        // Append the overlay to the card
+                        cardDiv.appendChild(overlayDiv);
+
+                        console.log(roomCount);
+
+                        // Apply classes based on the number of callers
+                        if (roomCount === 2) {
+                            videoGrid.classList.add('two-callers');
+                        } else {
+                            videoGrid.classList.add('one-caller');
+                        }
+
+                        // Add the card to the video grid
+                        videoGrid.appendChild(cardDiv);
+
                     }
                 };
 
@@ -424,74 +451,7 @@ try {
             }
 
 
-            function toggleRecordingIcons(isRecording) {
-                let e = document.getElementById('record');
-
-                if (isRecording) {
-                    e.setAttribute('title', 'Stop recording');
-                    e.children[0].classList.add('text-danger');
-                    e.children[0].classList.remove('text-white');
-                }
-
-                else {
-                    e.setAttribute('title', 'Record');
-                    e.children[0].classList.add('text-white');
-                    e.children[0].classList.remove('text-danger');
-                }
-            }
-
-
-            function startRecording(stream) {
-                mediaRecorder = new MediaRecorder(stream,);
-
-                mediaRecorder.start(1000);
-                toggleRecordingIcons(true);
-
-                mediaRecorder.ondataavailable = function (e) {
-                    recordedStream.push(e.data);
-                };
-
-                mediaRecorder.onstop = function () {
-                    toggleRecordingIcons(false);
-
-                    h.saveRecordedStream(recordedStream, userName);
-
-                    setTimeout(() => {
-                        recordedStream = [];
-                    }, 3000);
-                };
-
-                mediaRecorder.onerror = function (e) {
-                    console.error(e);
-                };
-            }
-
-            document.getElementById('chat-input-btn').addEventListener('click', (e) => {
-                console.log("here: ", document.getElementById('chat-input').value)
-                if (document.getElementById('chat-input').value.trim()) {
-                    sendMsg(document.getElementById('chat-input').value);
-
-                    setTimeout(() => {
-                        document.getElementById('chat-input').value = '';
-                    }, 50);
-                }
-            });
-
-            //Chat textarea
-            document.getElementById('chat-input').addEventListener('keypress', (e) => {
-                if (e.which === 13 && (e.target.value.trim())) {
-                    e.preventDefault();
-
-                    sendMsg(e.target.value);
-
-                    setTimeout(() => {
-                        e.target.value = '';
-                    }, 50);
-                }
-            });
-
-
-            //When the video icon is clicked
+            // //When the video icon is clicked
             document.getElementById('toggle-video').addEventListener('click', (e) => {
                 e.preventDefault();
 
@@ -517,7 +477,7 @@ try {
             });
 
 
-            //When the mute icon is clicked
+            // //When the mute icon is clicked
             document.getElementById('toggle-mute').addEventListener('click', (e) => {
                 e.preventDefault();
 
@@ -543,9 +503,13 @@ try {
             });
 
 
-            //When user clicks the 'Share screen' button
+            // //When user clicks the 'Share screen' button
             document.getElementById('share-screen').addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log(roomCount)
+                if (roomCount === 1) {
+                    return window.alert('Cannot start screen-share. No one else in room')
+                }
 
                 if (screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState != 'ended') {
                     stopSharingScreen();
@@ -553,58 +517,6 @@ try {
 
                 else {
                     shareScreen();
-                }
-            });
-
-
-            //When record button is clicked
-            document.getElementById('record').addEventListener('click', (e) => {
-                /**
-                 * Ask user what they want to record.
-                 * Get the stream based on selection and start recording
-                 */
-                if (!mediaRecorder || mediaRecorder.state == 'inactive') {
-                    h.toggleModal('recording-options-modal', true);
-                }
-
-                else if (mediaRecorder.state == 'paused') {
-                    mediaRecorder.resume();
-                }
-
-                else if (mediaRecorder.state == 'recording') {
-                    mediaRecorder.stop();
-                }
-            });
-
-
-            //When user choose to record screen
-            document.getElementById('record-screen').addEventListener('click', () => {
-                h.toggleModal('recording-options-modal', false);
-
-                if (screen && screen.getVideoTracks().length) {
-                    startRecording(screen);
-                }
-
-                else {
-                    h.shareScreen().then((screenStream) => {
-                        startRecording(screenStream);
-                    }).catch(() => { });
-                }
-            });
-
-
-            //When user choose to record own video
-            document.getElementById('record-video').addEventListener('click', () => {
-                h.toggleModal('recording-options-modal', false);
-
-                if (myStream && myStream.getTracks().length) {
-                    startRecording(myStream);
-                }
-
-                else {
-                    h.getUserFullMedia().then((videoStream) => {
-                        startRecording(videoStream);
-                    }).catch(() => { });
                 }
             });
         }

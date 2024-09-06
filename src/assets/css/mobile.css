@@ -1,0 +1,76 @@
+@media screen and (max-width: 768px) {
+    #main-div {
+        display: flex;
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+        width: 100%;
+        height: 100vh;
+    }
+
+    #main-div > div {
+        scroll-snap-align: center;
+        flex: 0 0 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #main-div div.presenting-main {
+        height: calc(100% - 115px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #292929bd;
+        border: 1px solid #242424;
+        border-radius: 1ch;
+    }
+
+    #video-grid {
+        display: grid;
+        gap: 1ch;
+        padding: 1ch 0;
+        overflow-y: scroll;
+        width: 100%;
+        height: calc(100% - 115px);
+    }
+
+    .user-video {
+        width: 90%;
+        height: 250px;
+        margin: 0 auto;
+        background-color: #2e2e2e;
+        border-radius: 1ch;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* .user-video */
+
+    .user-video video {
+        width: 100%;
+        height: 250px;
+        object-fit: contain;
+        border-radius: 1ch;
+    }
+
+    .video-overlay-controls {
+        display: flex;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 250px;
+        background-color: var(--o-transparent);
+        border-radius: 1ch;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-name {
+        position: absolute;
+        bottom: 1ch;
+        right: 1ch;
+        color: white;
+        text-align: right;
+    }
+}

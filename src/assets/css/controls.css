@@ -1,0 +1,253 @@
+@media screen and (min-width:768px) {
+    #controls-tab {
+        background-color: #393939;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        width: 100%;
+        margin: 0;
+        padding: 1ch;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+    }
+
+    #controls-tab #time {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        color: white;
+        margin-right: 4rem;
+        font-family: sans-serif;
+        padding-left: 2rem;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+
+    #controls-tab .icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+    #controls-tab .icons .btn {
+        border-radius: 50%;
+        height: 33px;
+        width: 33px;
+        font-size: 1.1rem;
+        color: white;
+        margin-right: 1rem;
+        background-color: #434649;
+        text-align: center;
+        padding-top: 12px;
+        cursor: pointer;
+    }
+
+    #controls-tab .icon .end-btn {
+        text-decoration: none;
+    }
+
+    #controls-tab .icons .end-btn {
+        background-color: tomato;
+        color: var(--white);
+        width: 60px;
+        padding-top: 12px;
+        height: 30px;
+        border-radius: 2rem;
+        font-size: 1.1rem;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #controls-tab .icons i {
+        color: var(--white);
+    }
+
+    #controls-tab .icons .end-btn i {
+        transform: rotateY(-180deg);
+    }
+
+    #controls-tab .icons .end-btn:hover {
+        background-color: rgb(250, 64, 32);
+        transition: background-color .5s ease-in-out;
+    }
+
+    #controls-tab .icons .btn:hover {
+        background-color: #3a3c3d;
+        transition: background-color .5s ease-in-out;
+    }
+
+}
+
+@media screen and (max-width:768px) {
+    @media screen and (orientation: portrait) {
+        #controls-tab {
+            background-color: #393939;
+            position: absolute;
+            left: 0%;
+            bottom: 0;
+            height: 80px;
+            width: 100%;
+            overflow-x: scroll;
+            margin: 0;
+            padding: 1ch;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+        }
+
+        #controls-tab #time {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            color: white;
+            font-family: sans-serif;
+            font-size: 1.4ch;
+            margin-top: 1rem;
+        }
+
+        #controls-tab .icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            margin-left: 1ch;
+
+        }
+
+        #controls-tab .icons .btn {
+            border-radius: 50%;
+            height: 29px;
+            width: 25px;
+            font-size: 1.1rem;
+            color: white;
+            margin-right: 1rem;
+            background-color: #434649;
+            text-align: center;
+            padding-top: 10px;
+            cursor: pointer;
+        }
+
+        #controls-tab .icons .end-btn {
+            text-decoration: none;
+        }
+
+        #controls-tab .icons .end-btn {
+            background-color: tomato;
+            color: white;
+            width: 60px;
+            padding-top: 12px;
+            height: 30px;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #controls-tab .icons .end-btn i {
+            transform: rotateY(-180deg);
+        }
+
+        #controls-tab .icons .end-btn:hover {
+            background-color: rgb(250, 64, 32);
+            transition: background-color .5s ease-in-out;
+        }
+
+        #controls-tab .icons .btn:hover {
+            background-color: #3a3c3d;
+            transition: background-color .5s ease-in-out;
+        }
+    }
+
+    @media screen and (orientation: landscape) {
+        #controls-tab {
+            background-color: #393939;
+            position: absolute;
+            right: 0%;
+            top: 0;
+            height: 100%;
+            width: 80px;
+            overflow-y: scroll;
+            margin: 0;
+            padding: 1ch;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            align-items: center;
+        }
+
+        #controls-tab #time {
+            height: 100%;
+            width: 80px;
+            text-wrap: wrap;
+            display: flex;
+            flex-flow: column;
+            align-items: start;
+            color: white;
+            margin-right: 0;
+            font-family: sans-serif;
+            padding-left: 0;
+            font-size: 1rem;
+            margin-top: 0;
+        }
+
+        #controls-tab .icons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2ch;
+        }
+
+        #controls-tab .icons .btn {
+            border-radius: 50%;
+            height: 23px;
+            width: 23px;
+            font-size: 1rem;
+            color: white;
+            margin-right: 0;
+            background-color: #434649;
+            text-align: center;
+            padding-top: 10px;
+            margin-bottom: 1ch;
+            cursor: pointer;
+        }
+
+        #controls-tab .icons .end-btn {
+            text-decoration: none;
+        }
+
+        #controls-tab .icons .end-btn {
+            background-color: tomato;
+            color: var(--white);
+            width: 30px;
+            padding-top: 4px;
+            height: 20px;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #controls-tab .icons i {
+            color: var(--white);
+        }
+
+        #controls-tab .icons .end-btn i {
+            transform: rotateY(-180deg);
+        }
+
+        #controls-tab .icons .end-btn:hover {
+            background-color: rgb(250, 64, 32);
+            transition: background-color .5s ease-in-out;
+        }
+
+        #controls-tab .icons .btn:hover {
+            background-color: #3a3c3d;
+            transition: background-color .5s ease-in-out;
+        }
+    }
+}
