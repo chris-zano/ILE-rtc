@@ -14,6 +14,16 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/url/main', (req, res) => {
+    const url = process.env.MAIN_URL;
+    res.status(200).json({url: url});
+})
+
+app.get('/url/host', (req, res) => {
+    const url = process.env.SERVER_URL;
+    res.status(200).json({url: url});
+})
+
 app.get('/meeting', (req, res) => {
     if (!req.query || Object.keys(req.query).length === 0) {
         return res.status(400).json({ message: 'invalid request format.', validPath: '/meeting?courseId=$&chapter=$' })
