@@ -1,4 +1,4 @@
-// const environment_url = 'http://localhost:5050';
+// const environment_url = '${environment_url}';
 const environment_url = 'https://ile-ile.onrender.com';
 
 const addParticipant = async (courseId, participant) => {
@@ -41,7 +41,7 @@ const getParticipants = async (courseId) => {
 const getCourseInformation = async (courseId) => {
 
     const path = `/rtc/course/info?id=${courseId}`;
-    const url = encodeURI(`http://localhost:5050${path}`);
+    const url = encodeURI(`${environment_url}${path}`);
 
     const response = await fetch(url);
     const data = await response.json();
@@ -57,7 +57,7 @@ const getCourseInformation = async (courseId) => {
 const getUserInfo = async (userId, userType) => {
 
     const path = `/rtc/user/info?id=${userId}&type=${userType}`;
-    const url = encodeURI(`http://localhost:5050${path}`);
+    const url = encodeURI(`${environment_url}${path}`);
 
     const response = await fetch(url);
     const data = await response.json();

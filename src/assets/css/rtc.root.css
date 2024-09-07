@@ -1,13 +1,13 @@
 @font-face {
     font-family: robotoReg;
-    src: url('http://localhost:5050/fonts/roboReg');
-    /* src: url('https://ile-ile.onrender.com/fonts/roboReg'); */
+    /* src: url('http://localhost:5050/fonts/roboReg'); */
+    src: url('https://ile-ile.onrender.com/fonts/roboReg');
 }
 
 @font-face {
     font-family: RobotoSlab;
-    src: url('http://localhost:5050/fonts/RobotoSlab-Regular');
-    /* src: url('https://ile-ile.onrender.com/fonts/RobotoSlab-Regular'); */
+    /* src: url('http://localhost:5050/fonts/RobotoSlab-Regular'); */
+    src: url('https://ile-ile.onrender.com/fonts/RobotoSlab-Regular');
 }
 
 :root {
