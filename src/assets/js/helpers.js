@@ -64,7 +64,8 @@ export default {
                 video: true,
                 audio: {
                     echoCancellation: true,
-                    noiseSuppression: true
+                    noiseSuppression: true,
+                    autoGainControl: true
                 }
             });
         }
@@ -206,7 +207,11 @@ export default {
 
 
     setLocalStream(stream, mirrorMode = true) {
+        const userInfo = sessionStorage.getItem('user-info') ? JSON.parse(sessionStorage.getItem('user-info')) : null;
+        const userName = `${userInfo.doc.firstName} ${userInfo.doc.lastName}`|| null;
         const localVidElem = document.getElementById('local');
+
+        document.getElementById('my-name').innerText = `${userName} (me)`;
 
         localVidElem.srcObject = stream;
         mirrorMode ? localVidElem.classList.add('mirror-mode') : localVidElem.classList.remove('mirror-mode');

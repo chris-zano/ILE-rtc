@@ -49,13 +49,13 @@ io.on('connection', (socket) => {
 
         //Inform other members in the room of new user's arrival
         if ( socket.adapter.rooms.has(data.room) === true ) {
-            socket.to( data.room ).emit( 'new user', { socketId: data.socketId } );
+            socket.to( data.room ).emit( 'new user', { socketId: data.socketId, user: data.user } );
         }
     } );
 
 
     socket.on( 'newUserStart', ( data ) => {
-        socket.to( data.to ).emit( 'newUserStart', { sender: data.sender } );
+        socket.to( data.to ).emit( 'newUserStart', { sender: data.sender, user: data.user } );
     } );
 
 
@@ -68,12 +68,37 @@ io.on('connection', (socket) => {
         socket.to( data.to ).emit( 'ice candidates', { candidate: data.candidate, sender: data.sender } );
     } );
 
+    socket.on( 'get-username' , (data)=> {
+        socket.to(data.to).emit('get_username', {from: data.from, to: data.to})
+    });
+
+    socket.on( 'send-username', (data) => {
+        socket.to(data.to).emit('send_username', {from: data.from, to: data.to, user: data.user});
+        
+    })
+
     socket.on('send-message', (data) => {
         io.to(data.room).emit('receive-message', data.inputMsg, data.userName);
     });
 
     socket.on('host-end-for-all', (room) => {
         socket.to(room).emit('call-ended-for-all');
+    });
+
+    socket.on('emojiReaction', (data) => {
+        io.to(data.room).emit('emojiReaction', data);
+    });
+
+    socket.on('user-left', (data) => {
+        io.to(data.room).emit('user-left-sound', {username: data.user.userName});
+    });
+
+    socket.on('user-raised-hand', (data) => {
+        io.to(data.room).emit('hand-raised', data);
+    })
+
+    socket.on('not_handRaised', (data) => {
+        io.to(data.room).emit('lowerHand', data);
     })
 });
 
