@@ -79,7 +79,44 @@
         background-color: #3a3c3d;
         transition: background-color .5s ease-in-out;
     }
+    
+    #controls-tab .icons .btn.emoji_tray #emoji-tray {
+        position: fixed;
+        background-color: var(--white);
+        box-shadow: var(--box-shadow-thin);
+        bottom: 120px;
+        right: 100px; 
+        width: 180px;
+        padding: 1ch;
+        border-radius: 1ch;
+        height: 200px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 1ch;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+        transition: var(--transition-default);
+    }
 
+    #controls-tab .icons .btn.emoji_tray #emoji-tray.show button {
+        border: none;
+        outline: none;
+        width: 30px;
+        height: 30px;
+        background-color: var(--inactive);
+        border-radius: 50%;
+        padding: 1ch;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #controls-tab .icons .btn.emoji_tray #emoji-tray.hidden {
+        display: none;
+    }
 }
 
 @media screen and (max-width:768px) {

@@ -19,9 +19,11 @@
     <link rel="stylesheet" href="../assets/css/video-grid.css" type="text/css" />
 
     <script src="/socket.io/socket.io.js"></script>
+    <script defer src="../assets/js/manageSocket.js"></script>
     <script defer src="../assets/js/notifications.js"></script>
     <script defer type="module" src="../assets/js/rtc.js"></script>
     <script defer src="../assets/js/utils.js"></script>
+    <script defer src="../assets/js/reactions.js"></script>
     <script defer src="../assets/js/actions.js"></script>
     <script defer type="module" src="../assets/js/events.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js"
@@ -52,8 +54,8 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
         <div id="controls-tab">
             <div id="time"></div>
             <div class="icons call-controls">
@@ -61,16 +63,42 @@
                 <div class="btn"><i class="fa fa-video-camera" id="toggle-video"></i></div>
                 <div class="btn"><i class="fa fa-upload" id="share-screen"></i></div>
                 <div class="btn end-btn" id="leave-call"><i class="fa fa-phone" aria-hidden="true"></i></div>
+
             </div>
             <div class="icons call-actions">
                 <div class="btn" id="chat-box-btn"><i class="fas fa-comment-alt"></i></div>
                 <div class="btn"><i class="fas fa-info-circle"></i></div>
                 <div class="btn"><i class="fas fa-user-friends" id="get-participants"></i></div>
+                <div class="btn emoji_tray">
+                    <i class="fas fa-smile" onclick="toggleEmojiTray()"></i>
+                    <div class="emojis hidden" id="emoji-tray">
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">😀</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">❤️</button>
+                        <button class="emoji-btn" onclick="emojiReaction(this)">👍</button>
+                    </div>
+                    <!-- Add more emojis -->
+                </div>
             </div>
+
         </div>
     </section>
-   
-   
+
+
     <section class="popups" id="popups" aria-hidden="true">
         <article class="attendance" id="article-attendance" aria-hidden="true">
             <div class="attendance-title">

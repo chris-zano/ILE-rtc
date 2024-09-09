@@ -74,6 +74,10 @@ io.on('connection', (socket) => {
 
     socket.on('host-end-for-all', (room) => {
         socket.to(room).emit('call-ended-for-all');
+    });
+
+    socket.on('emojiReaction', (data) => {
+        io.to(data.room).emit('emojiReaction', data.emojiClicked);
     })
 });
 
