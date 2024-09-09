@@ -1,6 +1,8 @@
-const environment_url = 'http://localhost:5050';
+// const environment_url = 'http://localhost:5050';
 // const environment_url = 'https://b5q2fjr9-5050.uks1.devtunnels.ms/';
-// const environment_url = 'https://ile-ile.onrender.com';
+const environment_url = 'https://ile-ile.onrender.com';
+
+let roomCount = 0;
 
 const addParticipant = async (courseId, participant) => {
     console.log({ courseId, participant })
@@ -16,7 +18,6 @@ const addParticipant = async (courseId, participant) => {
     const response = await request.json();
 
     if (status === 200) {
-        console.log('Participants data added successfully', response.doc);
         return response.doc;
     }
 
@@ -27,14 +28,11 @@ const addParticipant = async (courseId, participant) => {
 const getParticipants = async (courseId) => {
     const request = await fetch(`${environment_url}/rtc/get-participants/${courseId}`);
     const status = request.status;
-    const response = await request.json();
 
     if (status === 200) {
         console.log('Participants data fetched successfully', response.doc);
         return response.doc;
     }
-    console.log(`Error`, response)
-
     console.error('An unexpected error occured while fetching participants');
     return [];
 }
@@ -71,6 +69,42 @@ const getUserInfo = async (userId, userType) => {
     return null;
 }
 
+
+
+const constructCoursePageUrl = (userId, courseId, userType) => {
+    const validUserTypes = ["lecturer", "student"];
+    if (validUserTypes.indexOf(userType) === -1) return null
+
+    const url = `${environment_url}/${userType}s/render/course/${courseId}/${userId}`;
+
+    return url;
+}
+
+const updateCourseMeetingInformation = async (courseId, chapter) => {
+    const url = `${environment_url}/rtc/update-call-info/${courseId}/${chapter}`;
+    const participants = await getParticipants(courseId);
+    const headers = { "Content-Type": "application/json" };
+
+    try {
+        const request = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({ attendees: participants })
+        });
+
+        const response = await request.json();
+
+        if (response.status === 200 && response.message === "Success") {
+            return true;
+        }
+
+        return false
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 const formatAMPM = (date) => {
     let hours = date.getHours();
     let minutes = date.getMinutes();
@@ -88,6 +122,16 @@ const setTime = () => {
 
 const setLocalDateTime = () => {
     setInterval(setTime, 1000);
+}
+
+const playJoinSound = () => {
+    const audio = document.getElementById('join-sound');
+    audio.play();
+}
+
+const playLeaveSound = () => {
+    const audio = document.getElementById('leave-sound');
+    audio.play();
 }
 
 const setUpRoom = async (h) => {
@@ -134,6 +178,7 @@ const setUpRoom = async (h) => {
 
 
     socket.on('connect', () => {
+
         //set socketId
         socketId = socket.io.engine.id;
 
@@ -147,24 +192,38 @@ const setUpRoom = async (h) => {
 
         socket.emit('user-joined-sound', {
             room: room,
-            socketId: socketId
+            socketId: socketId,
+            user: participantInformation
         });
 
         socket.on('user-left-sound', () => {
-            console.log('a user has left tthe call')
+            console.log('a user has left the call')
         })
 
         socket.on('new user', (data) => {
-            socket.emit('newUserStart', { to: data.socketId, sender: socketId });
+            socket.emit('newUserStart', { to: data.socketId, sender: socketId, user: participantInformation });
+            //play new user joined.
+            playJoinSound();
+
             pc.push(data.socketId);
-            init(true, data.socketId);
+            init(true, data.socketId, data.user);
+            socket.emit('get-username', {from: socketId, to: data.socketId})
         });
 
 
         socket.on('newUserStart', (data) => {
             pc.push(data.sender);
-            init(false, data.sender);
+            init(false, data.sender, data.user);
+            socket.emit('get-username', {from: socketId, to: data.sender})
         });
+
+        socket.on('get_username', (data) => {
+            socket.emit('send-username', {from: socketId, to: data.from, user: participantInformation})
+        })
+
+        socket.on('send_username', (data) => {
+            addUserName(data.from, data.user.userName)
+        })
 
 
         socket.on('ice candidates', async (data) => {
@@ -183,6 +242,7 @@ const setUpRoom = async (h) => {
 
                     //save my stream
                     myStream = stream;
+
 
                     stream.getTracks().forEach((track) => {
                         pc[data.sender].addTrack(track, stream);
@@ -208,6 +268,32 @@ const setUpRoom = async (h) => {
             const coursePageUrl = constructCoursePageUrl(participantInformation.uid, room, participantInformation.permissionClass);
             location.href = coursePageUrl;
         });
+
+        socket.on('user-left-sound', (data) => {
+            console.log(data);
+            playLeaveSound();
+        });
+
+        socket.on('lowerHand', (data) => {
+            const raised_target = document.getElementById(`${data.socketId}-wave`);
+
+            if (raised_target) {
+                raised_target.parentElement.removeChild(raised_target)
+            }
+        });
+
+        socket.on('hand-raised', (data) => {
+            const {user, socketId} = data;
+
+            const waver = document.createElement('div');
+            waver.className = 'hand-raised-user';
+            waver.id = `${socketId}-wave`;
+            waver.innerHTML =`
+                <i class="fa fa-hand-paper waving-hand"></i>
+                <span class="user-name">${user}</span>
+            `;
+            document.getElementById('hand-raised-stack').append(waver);
+        })
 
         socket.on('receive-message', (inputMsg, userName) => {
             console.log('message received from server', { userName, inputMsg })
@@ -235,13 +321,13 @@ const setUpRoom = async (h) => {
 
     });
 
-
-
-    function broadcastEmojiReactions(emojiClicked) {
-        console.log('broadcast function called with param: ', emojiClicked);
+    function addUserName(senderId, username) {
+        console.log(senderId + "-name")
+        setTimeout(() => {
+            const participant = document.getElementById(`${senderId}-name`);
+            participant.textContent = username;
+        },2000);
     }
-
-
 
     function urlify(text) {
         var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -268,6 +354,7 @@ const setUpRoom = async (h) => {
         else {
             const endCallResponse = confirm("Are you sure you want to leave this call?");
             if (endCallResponse) {
+                socket.emit('user-left', { room: room, socketId: socketId, user: participantInformation })
                 return window.location.href = coursePageUrl;
 
             }
@@ -280,7 +367,9 @@ const setUpRoom = async (h) => {
             //save my stream
             myStream = stream;
 
-            h.setLocalStream(stream);
+            setTimeout(() => {
+                h.setLocalStream(stream);
+            }, 2000);
         }).catch((e) => {
             console.error(`stream error: ${e}`);
         });
@@ -288,7 +377,7 @@ const setUpRoom = async (h) => {
 
 
 
-    function init(createOffer, partnerName) {
+    function init(createOffer, partnerName, user) {
         pc[partnerName] = new RTCPeerConnection(h.getIceServer());
 
         if (screen && screen.getTracks().length) {
@@ -353,7 +442,7 @@ const setUpRoom = async (h) => {
                 newVid.id = `${partnerName}-video`;
                 newVid.srcObject = str;
                 newVid.autoplay = true;
-                newVid.muted = true; // Optional: mute the video for local playback
+                newVid.muted = false;
 
                 // Create a new div for the card
                 let cardDiv = document.createElement('div');
@@ -369,15 +458,14 @@ const setUpRoom = async (h) => {
                 // Add the user's name to the overlay
                 let userNameDiv = document.createElement('div');
                 userNameDiv.className = 'user-name';
-                userNameDiv.id = 'my-name';
-                userNameDiv.innerText = `Dr. Phillip Kissembe (me)`; // Example user name
+                userNameDiv.id = `${partnerName}-name`;
+                userNameDiv.innerText = ``; // Example user name
 
                 overlayDiv.appendChild(userNameDiv);
 
                 // Append the overlay to the card
                 cardDiv.appendChild(overlayDiv);
 
-                console.log(roomCount);
 
                 // Apply classes based on the number of callers
                 if (roomCount === 2) {
@@ -486,17 +574,13 @@ const setUpRoom = async (h) => {
         let elem = document.getElementById('toggle-video');
 
         if (myStream.getVideoTracks()[0].enabled) {
-            e.target.classList.remove('fa-video');
-            e.target.classList.add('fa-video-slash');
-            elem.setAttribute('title', 'Show Video');
+            document.getElementById("lbl-vid").parentElement.parentElement.classList.add('cancelled');
 
             myStream.getVideoTracks()[0].enabled = false;
         }
 
         else {
-            e.target.classList.remove('fa-video-slash');
-            e.target.classList.add('fa-video');
-            elem.setAttribute('title', 'Hide Video');
+            document.getElementById("lbl-vid").parentElement.parentElement.classList.remove('cancelled');
 
             myStream.getVideoTracks()[0].enabled = true;
         }
@@ -512,17 +596,13 @@ const setUpRoom = async (h) => {
         let elem = document.getElementById('toggle-mute');
 
         if (myStream.getAudioTracks()[0].enabled) {
-            e.target.classList.remove('fa-microphone-alt');
-            e.target.classList.add('fa-microphone-alt-slash');
-            elem.setAttribute('title', 'Unmute');
+            document.getElementById("lbl-mic").parentElement.parentElement.classList.add('cancelled');
 
             myStream.getAudioTracks()[0].enabled = false;
         }
 
         else {
-            e.target.classList.remove('fa-microphone-alt-slash');
-            e.target.classList.add('fa-microphone-alt');
-            elem.setAttribute('title', 'Mute');
+            document.getElementById("lbl-mic").parentElement.parentElement.classList.remove('cancelled');
 
             myStream.getAudioTracks()[0].enabled = true;
         }
@@ -535,9 +615,9 @@ const setUpRoom = async (h) => {
     document.getElementById('share-screen').addEventListener('click', (e) => {
         e.preventDefault();
         console.log(roomCount)
-        if (roomCount === 1) {
-            return window.alert('Cannot start screen-share. No one else in room')
-        }
+        // if (roomCount === 1) {
+        //     return window.alert('Cannot start screen-share. No one else in room')
+        // }
 
         if (screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState != 'ended') {
             stopSharingScreen();
@@ -557,6 +637,7 @@ const utilsMain = () => {
 
     const participantsBtn = document.getElementById("get-participants");
     participantsBtn.addEventListener("click", async () => {
+
         const articleAtt = document.getElementById("article-attendance");
         if (articleAtt.getAttribute("aria-hidden") === "true") {
             document.getElementById("popups").setAttribute("aria-hidden", "false");

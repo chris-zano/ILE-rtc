@@ -6,6 +6,28 @@
     box-sizing: unset;
 }
 
+.floating-emoji {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    opacity: 0;
+    transition: all 2s ease-in-out;
+    background-color: var(--white);
+    padding: 1ch;
+    border-radius: 1ch;
+    box-shadow: var(--box-shadow-extra-thin);
+    font-size: 14px;
+    font-family: sans-serif;
+    color: var(--text-title);
+}
+
+.floating-emoji.float-up {
+    bottom: 80%;
+    opacity: 1;
+}
+
 @media screen and (min-width:768px) {
     section#rtc-room-main {
         background-color: #434649;
@@ -32,6 +54,53 @@
         gap: 1ch;
     }
 
+    #hand-raised-stack {
+        position: fixed;
+        bottom: 100px;
+        left: 20px;
+        max-width: 200px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1ch;
+    }
+    
+    .hand-raised-user {
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        padding: 3px 10px;
+        border-radius: 50px;
+        background-color: white;
+    }
+    
+    .hand-raised-user i {
+        color: black;
+    }
+    
+    .hand-raised-user .user-name {
+        margin-left: 10px;
+        font-size: 14px;
+        color: var(--text-title);
+    }
+    
+    /* Waving hand animation */
+    .waving-hand {
+        font-size: 18px;
+        animation: wave 1s infinite;
+    }
+    
+    /* Keyframes to create a waving motion */
+    @keyframes wave {
+        0% { transform: rotate(0deg); }
+        15% { transform: rotate(10deg); }
+        30% { transform: rotate(0deg); }
+        45% { transform: rotate(-10deg); }
+        60% { transform: rotate(0deg); }
+        100% { transform: rotate(0deg); }
+    }
+
 }
 
 @media screen and (max-width:768px) {
@@ -49,5 +118,50 @@
         display: grid;
         grid-template-columns: 1fr;
         grid-template-rows: auto 90px;
+    }
+
+    #hand-raised-stack {
+        padding: 5px;
+        max-width: 200px;
+        position: fixed;
+        bottom: 120px;
+        left: 20px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1ch;
+    }
+    
+    .hand-raised-user {
+        margin-bottom: 5px;
+        padding: 3px 10px;
+        border-radius: 50px;
+        background-color: white;
+    }
+    
+    .hand-raised-user i {
+        color: black;
+    }
+    
+    .hand-raised-user .user-name {
+        margin-left: 10px;
+        font-size: 14px;
+        color: var(--text-title);
+    }
+    
+    /* Waving hand animation */
+    .waving-hand {
+        font-size: 18px;
+        animation: wave 1s infinite;
+    }
+    
+    /* Keyframes to create a waving motion */
+    @keyframes wave {
+        0% { transform: rotate(0deg); }
+        15% { transform: rotate(10deg); }
+        30% { transform: rotate(0deg); }
+        45% { transform: rotate(-10deg); }
+        60% { transform: rotate(0deg); }
+        100% { transform: rotate(0deg); }
     }
 }
