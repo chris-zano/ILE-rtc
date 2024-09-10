@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" type="text/css" />
     <link rel="stylesheet" href="../assets/css/rtc.root.css" type="text/css" />
     <link rel="stylesheet" href="../assets/css/rtc.popus.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/css/loader.css" type="text/css" />
     <link rel="stylesheet" href="../assets/css/mobile.css" type="text/css" />
     <link rel="stylesheet" href="../assets/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../assets/css/controls.css" type="text/css" />
@@ -18,6 +19,7 @@
     <link rel="stylesheet" href="../assets/css/video-grid.css" type="text/css" />
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../assets/js/loader.js"></script>
     <script defer src="../assets/js/manageSocket.js"></script>
     <script defer src="../assets/js/notifications.js"></script>
     <script defer type="module" src="../assets/js/rtc.js"></script>
@@ -58,31 +60,31 @@
         <div id="controls-tab">
             <div id="time"></div>
             <div class="icons call-controls">
-                <div class="btn" id="toggle-mute"><button type="button"><i class="fa fa-microphone"
+                <div class="btn" id="toggle-mute" title="Mute Self"><button type="button"><i class="fa fa-microphone"
                             id="lbl-mic"></i></button></div>
-                <div class="btn" id="toggle-video"><button type="button"><i class="fa fa-video-camera"
+                <div class="btn" id="toggle-video" title="Hide Video"><button type="button"><i class="fa fa-video-camera"
                             id="lbl-vid"></i></button></div>
-                <div class="btn" onclick="raiseHand(this)" id="raise-hand" data-raised="false">
+                <div class="btn" onclick="raiseHand(this)" id="raise-hand" data-raised="false" title="Raise Hand">
                     <button type="button">
                         <i class="fa fa-hand-paper"></i>
                     </button>
                 </div>
-                <div class="btn" id="share-screen"><button type="button"><i class="fa fa-upload"></i></button></div>
-                <div class="btn end-btn" id="leave-call"><i class="fa fa-phone" aria-hidden="true"></i></div>
+                <div class="btn" id="share-screen" title="Share Screen"><button type="button"><i class="fa fa-upload"></i></button></div>
+                <div class="btn end-btn" id="leave-call" title="End Call"><i class="fa fa-phone" aria-hidden="true"></i></div>
 
             </div>
             <div class="icons call-actions">
-                <div class="btn" id="chat-box-btn">
+                <div class="btn" id="chat-box-btn" title="Chat">
                     <button type="button">
                         <i class="fas fa-comment-alt"></i>
                     </button>
                 </div>
-                <div class="btn" id="get-participants">
+                <div class="btn" id="get-participants" title="Participants">
                     <button type="button">
                         <i class="fas fa-user-friends"></i>
                     </button>
                 </div>
-                <div class="btn emoji_tray" onclick="toggleEmojiTray()">
+                <div class="btn emoji_tray" onclick="toggleEmojiTray()" title="Reactions">
                     <i class="fas fa-smile"></i>
                     <div class="emojis hidden" id="emoji-tray">
                         <button class="emoji-btn">😀</button>
@@ -100,6 +102,9 @@
                     </div>
 
                 </div>
+                <div class="btn" id="whiteboard-control" title="White Board">
+                    <i class="fa fa-edit" style="color: white;"></i>
+                </div>
             </div>
 
         </div>
@@ -109,7 +114,7 @@
     <section class="popups" id="popups" aria-hidden="true">
         <article class="attendance" id="article-attendance" aria-hidden="true">
             <div class="attendance-title">
-                <p>Participants (<span id="participants-count">10</span>)</p>
+                <p>Participants (<span id="participants-count">0</span>)</p>
             </div>
             <ul id="participants-list"></ul>
         </article>
@@ -120,37 +125,16 @@
                 <small>&#9432; Messages are not available after the call</small>
             </div>
             <ul class="chat-list" id="chat-list">
-                <li>
-                    <span class="sender">Dr. Phillip Kissembe <span class="date-time" style="margin-left: 10px;">
-                            &nbsp;20:37pm</span></span>
-                    <p class="message">This is the contents of the message. I hope it finds whomever reads it well.
-                        blessings</p>
-
-                </li>
-
             </ul>
             <div class="msg-form">
-                <div id="msg-preview" aria-hidden="true">
-                </div>
                 <form action="#" method="post" id="form">
                     <input type="text" id="msg-input" placeholder="enter message here...." required>
                 </form>
             </div>
-            <script>
-                const previewDiv = document.getElementById("msg-preview");
-                const msgInput = document.getElementById("msg-input");
-
-                msgInput.addEventListener('input', () => {
-                    previewDiv.setAttribute("aria-hidden", "false")
-                    previewDiv.textContent = msgInput.value
-                })
-            </script>
         </article>
     </section>
 
     <div id="hand-raised-stack"></div>
-    
-
     <audio id="join-sound" src="../assets/audio/Doorbell.mp3" preload="auto"></audio>
     <audio id="leave-sound" src="../assets/audio/Log off.mp3" preload="auto"></audio>
 </body>

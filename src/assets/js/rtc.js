@@ -16,6 +16,12 @@ try {
         const meetingRoomUrl = new RegExp(`^${deployed_url}/meeting\\?room=[a-f0-9]{8}`);
 
         if (onboardingURL.test(window.location.href)) {
+
+            const sectionRoom = document.getElementById('rtc-room-main');
+            const loader =  new LoadingSpinner(sectionRoom);
+            sectionRoom.innerHTML = ``;
+            loader.show();
+
             let courseRoom = h.getQString(location.href, 'courseId');
             let courseChapter = h.getQString(location.href, 'chapter');
             let usersID = h.getQString(location.href, 'userId');
@@ -30,7 +36,10 @@ try {
             sessionStorage.setItem('chapter-info', JSON.stringify(courseChapter))
 
             const roomUrl = `/meeting?room=${courseRoom}`;
+            setTimeout(() => {
+                loader.hide();
             window.location.href = roomUrl;
+            }, 1000);
         }
         else if (meetingRoomUrl.test(window.location.href)) {
             setUpRoom(h)
