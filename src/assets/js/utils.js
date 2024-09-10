@@ -1,6 +1,6 @@
-// const environment_url = 'http://localhost:5050';
+const environment_url = 'http://localhost:5050';
 // const environment_url = 'https://b5q2fjr9-5050.uks1.devtunnels.ms/';
-const environment_url = 'https://ile-ile.onrender.com';
+// const environment_url = 'https://ile-ile.onrender.com';
 
 let roomCount = 0;
 
@@ -28,6 +28,7 @@ const addParticipant = async (courseId, participant) => {
 const getParticipants = async (courseId) => {
     const request = await fetch(`${environment_url}/rtc/get-participants/${courseId}`);
     const status = request.status;
+    const response = await request.json();
 
     if (status === 200) {
         console.log('Participants data fetched successfully', response.doc);
@@ -312,10 +313,9 @@ const setUpRoom = async (h) => {
             let inputMsg = document.getElementById('msg-input').value;
             console.log(inputMsg, 1)
             if (inputMsg != '') {
-                console.log(inputMsg, 2)
                 socket.emit('send-message', { room: room, socketId: socketId, inputMsg, userName });
             }
-            document.getElementById('msg-preview').setAttribute('aria-hidden', 'true')
+            document.getElementById('msg-input').value = ""
         });
 
 
@@ -345,8 +345,14 @@ const setUpRoom = async (h) => {
 
         if (participantInformation.permissionClass === 'lecturer') {
             alert('ending call for all particpants')
-            socket.emit('host-end-for-all', (room))
-            await updateCourseMeetingInformation(room, chapterInfo);
+            socket.emit('host-end-for-all', (room));
+            updateCourseMeetingInformation(room, chapterInfo)
+            .then(()=> {
+                return;
+            })
+            .catch(error => {
+                console.log(error);
+            });
 
             location.href = coursePageUrl;
         }
@@ -522,6 +528,8 @@ const setUpRoom = async (h) => {
 
             //share the new stream with all partners
             broadcastNewTracks(stream, 'video', false);
+            
+            document.getElementById('share-screen').style.backgroundColor = '#137ee8'
 
             //When the stop sharing button shown by the browser is clicked
             screen.getVideoTracks()[0].addEventListener('ended', () => {
@@ -545,6 +553,7 @@ const setUpRoom = async (h) => {
         }).then(() => {
             h.toggleShareIcons(false);
             broadcastNewTracks(myStream, 'video');
+            document.getElementById('share-screen').style.backgroundColor = '#434649'
         }).catch((e) => {
             console.error(e);
         });
@@ -615,16 +624,17 @@ const setUpRoom = async (h) => {
     document.getElementById('share-screen').addEventListener('click', (e) => {
         e.preventDefault();
         console.log(roomCount)
-        // if (roomCount === 1) {
-        //     return window.alert('Cannot start screen-share. No one else in room')
-        // }
 
         if (screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState != 'ended') {
             stopSharingScreen();
+            document.getElementById('share-screen').setAttribute('title', 'Share Screen');
+            document.getElementById('share-screen').style.backgroundColor = 'inherit'
         }
-
+        
         else {
             shareScreen();
+            document.getElementById('share-screen').setAttribute('title', 'Stop Sharing');
+            
         }
     });
 }
@@ -642,9 +652,13 @@ const utilsMain = () => {
         if (articleAtt.getAttribute("aria-hidden") === "true") {
             document.getElementById("popups").setAttribute("aria-hidden", "false");
             articleAtt.setAttribute("aria-hidden", "false");
+            const loader = new LoadingSpinner(articleAtt);
+            loader.show();
 
             const participants = await getParticipants(room);
             document.getElementById('participants-list').innerHTML = "";
+
+            document.getElementById('participants-count').innerText = participants ? participants.length : 0;
 
             participants.forEach((participant) => {
                 const li = document.createElement("li");
@@ -667,6 +681,8 @@ const utilsMain = () => {
                 document.getElementById('participants-list').append(li);
             });
 
+            loader.hide();
+
         }
         else {
             document.getElementById("popups").setAttribute("aria-hidden", "true")
@@ -687,6 +703,18 @@ const utilsMain = () => {
             chatsDiv.setAttribute('aria-hidden', 'true');
             document.getElementById("popups").setAttribute("aria-hidden", "true");
         }
+    });
+
+    const whiteBoardBtn = document.getElementById('whiteboard-control');
+    whiteBoardBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const a = document.createElement('a');
+        a.href = 'https://excalidraw.com/';
+        a.target = "_blank";
+        a.style.display = 'none';
+        document.getElementById('rtc-room-main').append(a);
+        return a.click();
     })
 
 }

@@ -1,13 +1,13 @@
 
 import h from './helpers.js';
 
-// const environment_url = 'http://localhost:5050';
+const environment_url = 'http://localhost:5050';
 // const environment_url = 'https://b5q2fjr9-5050.uks1.devtunnels.ms/;
-const environment_url = 'https://ile-ile.onrender.com';
+// const environment_url = 'https://ile-ile.onrender.com';
 
-// const deployed_url = `http://localhost:8080`;
+const deployed_url = `http://localhost:8080`;
 // const deployed_url = `https://b5q2fjr9-8080.uks1.devtunnels.ms/`;
-const deployed_url = `https://ile-rtc.onrender.com`;
+// const deployed_url = `https://ile-rtc.onrender.com`;
 
 try {
     window.addEventListener('load', async () => {
@@ -16,6 +16,12 @@ try {
         const meetingRoomUrl = new RegExp(`^${deployed_url}/meeting\\?room=[a-f0-9]{8}`);
 
         if (onboardingURL.test(window.location.href)) {
+
+            const sectionRoom = document.getElementById('rtc-room-main');
+            const loader =  new LoadingSpinner(sectionRoom);
+            sectionRoom.innerHTML = ``;
+            loader.show();
+
             let courseRoom = h.getQString(location.href, 'courseId');
             let courseChapter = h.getQString(location.href, 'chapter');
             let usersID = h.getQString(location.href, 'userId');
@@ -30,7 +36,10 @@ try {
             sessionStorage.setItem('chapter-info', JSON.stringify(courseChapter))
 
             const roomUrl = `/meeting?room=${courseRoom}`;
+            setTimeout(() => {
+                loader.hide();
             window.location.href = roomUrl;
+            }, 1000);
         }
         else if (meetingRoomUrl.test(window.location.href)) {
             setUpRoom(h)
