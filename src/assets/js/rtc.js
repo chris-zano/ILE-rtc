@@ -1,13 +1,13 @@
 
 import h from './helpers.js';
 
-const environment_url = 'http://localhost:5050';
+// const environment_url = 'http://localhost:5050';
 // const environment_url = 'https://b5q2fjr9-5050.uks1.devtunnels.ms/;
-// const environment_url = 'https://ile-ile.onrender.com';
+const environment_url = 'https://ile-ile.onrender.com';
 
-const deployed_url = `http://localhost:8080`;
+// const deployed_url = `http://localhost:8080`;
 // const deployed_url = `https://b5q2fjr9-8080.uks1.devtunnels.ms/`;
-// const deployed_url = `https://ile-rtc.onrender.com`;
+const deployed_url = `https://ile-rtc.onrender.com`;
 
 try {
     window.addEventListener('load', async () => {
